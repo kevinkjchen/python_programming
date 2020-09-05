@@ -24,6 +24,8 @@ per_cls = 600
 IMG_SIZE = 224
 BATCH_SIZE = 4
 EPOCHS = 2
+model_folder_path = 'drive/My Drive/Tibame_AIoT_Project/face'
+img_folder_path = 'drive/My Drive/Tibame_AIoT_Project/Datasets/資料集_IMDB-Wiki'
 
 from google.colab import drive
 drive.mount('/content/drive')
@@ -122,10 +124,8 @@ x_train, x_test, y_train, y_test = train_test_split(np.array(train_df['full_path
 print(x_train[0], x_test[0], y_train[0], y_test[0])
 print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
-folder_path = 'drive/My Drive/Tibame_AIoT_Project/Datasets/資料集_IMDB-Wiki'
 detector = MTCNN()
-#feature_extractor = load_model(os.path.join(folder_path, 'facenet.h5'))
-#feature_extractor = load_model(os.path.join(folder_path, 'facenet_keras.h5'))
+#feature_extractor = load_model(os.path.join(model_folder_path, 'facenet_keras.h5'))
 
 # VGGFace: https://github.com/rcmalli/keras-vggface
 !pip install keras_vggface
@@ -157,7 +157,6 @@ age_model.summary()
 
 age_model.compile(loss="categorical_crossentropy", optimizer='adam', metrics=['accuracy'])
 
-model_folder_path = 'drive/My Drive/Tibame_AIoT_Project/face'
 age_model.load_weights(os.path.join(model_folder_path,'1_vggface_weight_mlp128-8_cls600.h5'))
 
 # 資料預處理 for facenet?
@@ -193,8 +192,6 @@ def detect_faces(img):
         patch = img[y1:y2, x1:x2] # crop face
         face_imgs.append(patch)
     return face_imgs
-
-img_folder_path = 'drive/My Drive/Tibame_AIoT_Project/Datasets/資料集_IMDB-Wiki'
 
 def data_generator(data_paths, y, batch_size=BATCH_SIZE):
     '''data generator for fit_generator'''
@@ -256,7 +253,8 @@ else:
     weights = {0:1., 1:1., 2:1., 3:1., 4:1., 5:1., 6:1., 7:1.}
 
 # fit_generator
-checkpoint = ModelCheckpoint("1_vggface_mlp128-8_epoch.h5", save_best_only=False)   #Defaults: save_freq='epoch'
+checkpoint = ModelCheckpoint(os.path.join(model_folder_path,"1_vggface_mlp128-8_epoch.h5"), 
+                save_best_only=False)   #Defaults: save_freq='epoch', save_weights_only=False
 earlystop = EarlyStopping(patience=5, restore_best_weights=True)
 logs = age_model.fit(generator_train,
                 epochs=EPOCHS,
@@ -268,7 +266,6 @@ logs = age_model.fit(generator_train,
                 callbacks=[checkpoint, earlystop] 
                 )
 
-model_folder_path = 'drive/My Drive/Tibame_AIoT_Project/face'
 age_model.save_weights(os.path.join(model_folder_path,'1_vggface_weight_mlp128-8_cls600.h5'))
 
 cur_train_idx = 0
@@ -293,10 +290,7 @@ def get_data(x, y, batch=20, IMG_SIZE=160, test=1):
     x_ori, x_norm, y_ori = [], [], y_idx
     for i,p in enumerate(x_idx):
         print(p)
-        # print(y_idx[i].argmax(axis=-1))
-        # 讀取圖片並使用借來的模型的預處理方式來作預處理
-        # img = np.array(load_img(os.path.join(img_folder_path,p[0]), target_size=(224, 224)))
-        # 讀取圖片並切下臉的部分
+        # 讀取圖片,切下臉的部分,並使用借來的模型的預處理方式來作預處理
         img = np.array(cv2.imread(os.path.join(img_folder_path,p))[:,:,::-1])
         # plt.imshow(img)
         # plt.show()
@@ -362,6 +356,7 @@ def predict_age(img):
 #         print('Female')
 #     return
 
+folder_path = '/content/drive/My Drive/week10/face_detection'
 def face_id(filename, IMG_SIZE=160):
     raw_img = cv2.imread(os.path.join(folder_path, filename))[:,:,::-1]
     faces = detect_faces(raw_img)
@@ -394,7 +389,6 @@ def face_id(filename, IMG_SIZE=160):
         # distance, name = distances[idx_min], names[idx_min]
         # print('name: ', name, ' distance: ',distance)
 
-folder_path = '/content/drive/My Drive/week10/face_detection'
 path = 'face3.jpg'
 face_id(path)
 plt.imshow(cv2.imread(os.path.join(folder_path, path))[:,:,::-1])
