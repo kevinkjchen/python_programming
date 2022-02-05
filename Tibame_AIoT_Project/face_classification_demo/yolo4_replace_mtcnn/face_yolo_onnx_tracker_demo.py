@@ -86,7 +86,7 @@ print("Init df_age_gender:", df_age_gender)
 #
 # connect to postgreSQL database
 #
-cur, conn = get_connection()
+#cur, conn = get_connection()
 
 all_start_time = time.time()
 start_time = 0
@@ -155,7 +155,7 @@ def preprocess_image(image):
 # 用opencv讀取影片並做inference
 #
 # p1 = cv2.VideoCapture("a-mei.mp4")
-p1 = cv2.VideoCapture("../TheHungerGames.mp4")
+p1 = cv2.VideoCapture("../TheHungerGames.mp4") #start_frame = 1160 #end_frame = start_frame + 60.0
 #p1 = cv2.VideoCapture("../ShootingApple.mp4")
 # p1 = cv2.VideoCapture("../jin-ma-53.mp4")
 #p1 = cv2.VideoCapture("../test_day_4.mp4")
@@ -168,12 +168,13 @@ print("總影格:", p1.get(7))
 #print("FPS:", p1.get(5))
 
 #start_frame = 400
-start_frame = 1160
+start_frame = 950
 #start_frame = 2560
 #start_frame = 100 #930 #700 #280 #100
 #start_frame = 0
 
 end_frame = start_frame + 60.0
+#end_frame = start_frame + 2000.0
 p1.set(1, start_frame) # set 當前影格
 while p1.isOpened()==True:
     ret, frame_ori = p1.read()
@@ -314,7 +315,7 @@ if df_age_gender['age'].count() != 0:
 
 
 # disconnect with DB
-disconnect(cur, conn)
+#disconnect(cur, conn)
 
 p1.release()		
 cv2.destroyAllWindows()

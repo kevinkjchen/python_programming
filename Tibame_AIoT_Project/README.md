@@ -1,5 +1,6 @@
 # AIoT專題實作
-[第四組 AIoT人流分析系統](https://drive.google.com/file/d/1r07A2nqnBT2vzzC84VvdAU4mbS5jxwh9/view?usp=sharing)
+[第四組 AIoT人流分析系統]
+(https://drive.google.com/file/d/1Acuj0m_LtXwCbhgE0SuUpEam6d4bRTrR/view?usp=sharing)
 
 ## object_detection
 訓練 yolo v4 模型來作 person 的 object detection 之前, 先用python程式檢查與整理標註檔
